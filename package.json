@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ninjaprox/github-webhooks/issues"
   },
-  "homepage": "https://github.com/ninjaprox/github-webhooks#readme"
+  "homepage": "https://github.com/ninjaprox/github-webhooks#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
 }
