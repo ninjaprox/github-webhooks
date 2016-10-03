@@ -19,10 +19,18 @@ router.post("/", function(req, res) {
             state: process.env.GITHUB_STATE
         }
     });
+    const token = req.signedCookies.token;
 
-    if (req.signedCookies.token) {
-        console.log(req.signedCookies.token);
-        res.status(200).end();
+    if (token) {
+        user.checkToken(token)
+            .then(function(user) {
+                if (user) {
+                    res.status(200).end();
+                    console.log(req.signedCookies.token);
+                } else {
+                    res.redirect(githubAuthUrl);
+                }
+            });
     } else {
         res.redirect(githubAuthUrl);
     }
