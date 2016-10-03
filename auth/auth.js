@@ -4,6 +4,7 @@ const router = express.Router();
 const unirest = require("unirest");
 const GitHubClient = require("../lib/githubClient");
 const unirestHandler = require("../helper/unirestHandler");
+const Q = require("q");
 
 module.exports = router;
 
@@ -25,14 +26,19 @@ router.post("/", function(req, res) {
 router.get("/", function(req, res) {
     const code = req.query.code;
 
-    requestAccessToken(code, function(error, token) {
-        const githubClient = new GitHubClient(token);
-
-        githubClient.user(function(error, user) {
-            console.log(user);
+    Q.nfcall(requestAccessToken, code)
+        .then(function(token) {
+            const githubClient = new GitHubClient(token);
+            
+            return Q.ninvoke(githubClient, "user");
+        })
+        .then(function(user) {
+            res.send(user);
+        })
+        .catch(function(error) {
+            console.log(error);
+            res.send("Failure");
         });
-    });
-    res.send("Success");
 });
 
 function requestAccessToken(code, callback) {
