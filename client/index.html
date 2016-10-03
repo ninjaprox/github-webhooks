@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>GitHub Webhooks</title>
-    </head>
-    <body>
-        <h1>Hello World</h1>
-        <form method="POST" action="/auth">
-            <input type="submit" value="Log in with GitHub"/>
+
+<head>
+    <title>GitHub Webhooks</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>GitHub Webhooks</h1>
+        <form method="POST" action="/auth" class="form">
+            <input type="submit" value="Log in with GitHub" class="btn btn-primary" />
         </form>
         <!--<a href="http://github.com/login/oauth/authorize?client_id=1688d4fb0452d17b1464&scope=public_repo%20repo%20user%3Aemail">Log in with GitHub</a>-->
-    </body>
+        <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    </div>
+</body>
+
 </html>
