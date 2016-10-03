@@ -1,6 +1,7 @@
 const express = require("express");
 const url = require("url");
 const router = express.Router();
+const unirest = require("unirest");
 
 module.exports = router;
 
@@ -15,11 +16,34 @@ router.post("/", function(req, res) {
             state: process.env.GITHUB_STATE
         }
     });
-    
+
     res.redirect(githubAuthUrl);
 });
 
 router.get("/", function(req, res) {
-    console.log(req.query);
+    const code = req.query.code;
+    
+    requestAccessToken(code);
     res.send("Success");
 });
+
+function requestAccessToken(code, callback) {
+    const githubAuthUrl = url.format({
+        protocol: "https",
+        hostname: "github.com",
+        pathname: "login/oauth/access_token",
+    });
+
+    unirest.post(githubAuthUrl)
+        .send({
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            state: process.env.GITHUB_STATE,
+            code: code
+        })
+        .end(function(res) {
+            if (callback) {
+                callback(res.error, res.body.access_token);
+            }
+        });
+}
