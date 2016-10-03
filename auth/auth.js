@@ -20,7 +20,12 @@ router.post("/", function(req, res) {
         }
     });
 
-    res.redirect(githubAuthUrl);
+    if (req.signedCookies.token) {
+        console.log(req.signedCookies.token);
+        res.status(200).end();
+    } else {
+        res.redirect(githubAuthUrl);
+    }
 });
 
 router.get("/", function(req, res) {
@@ -28,9 +33,12 @@ router.get("/", function(req, res) {
 
     requestAccessToken(code)
         .then(function(token) {
-            return user.info(token);
+            return user.authenticate(token);
         })
         .then(function(user) {
+            res.cookie("token", user.token, {
+                signed: true
+            });
             res.send(user);
         })
         .catch(function(error) {
