@@ -26,11 +26,11 @@ router.post("/", function(req, res) {
 router.get("/", function(req, res) {
     const code = req.query.code;
 
-    Q.nfcall(requestAccessToken, code)
+    requestAccessToken(code)
         .then(function(token) {
             const githubClient = new GitHubClient(token);
-            
-            return Q.ninvoke(githubClient, "user");
+
+            return githubClient.user();
         })
         .then(function(user) {
             res.send(user);
@@ -41,21 +41,23 @@ router.get("/", function(req, res) {
         });
 });
 
-function requestAccessToken(code, callback) {
+function requestAccessToken(code) {
     const githubAuthUrl = url.format({
         protocol: "https",
         hostname: "github.com",
         pathname: "login/oauth/access_token",
     });
 
-    unirest.post(githubAuthUrl)
-        .send({
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
-            state: process.env.GITHUB_STATE,
-            code: code
-        })
-        .end(unirestHandler(callback, function(body) {
-            return body.access_token;
-        }));
+    return Q.promise(function(resolve, reject) {
+        unirest.post(githubAuthUrl)
+            .send({
+                client_id: process.env.GITHUB_CLIENT_ID,
+                client_secret: process.env.GITHUB_CLIENT_SECRET,
+                state: process.env.GITHUB_STATE,
+                code: code
+            })
+            .end(unirestHandler(resolve, reject, function(body) {
+                return body.access_token;
+            }));
+    });
 }

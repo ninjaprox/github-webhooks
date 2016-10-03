@@ -1,14 +1,16 @@
 module.exports = unirestHandler;
 
-function unirestHandler(callback, reduce, proxy) {
+function unirestHandler(resolve, reject, reduce, proxy) {
     return function(res) {
+        const data = reduce ? reduce(res.body) : res.body;
+
         if (proxy) {
             proxy(res);
         }
-        if (callback) {
-            const data = reduce ? reduce(res.body) : res.body;
-            
-            callback(res.error, data);
+        if (res.error) {
+            reject(res.error);
+        } else {
+            resolve(data);
         }
     };
 }
