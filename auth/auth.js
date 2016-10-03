@@ -2,7 +2,7 @@ const express = require("express");
 const url = require("url");
 const router = express.Router();
 const unirest = require("unirest");
-const GitHubClient = require("../lib/githubClient");
+const user = require("../model/user");
 const unirestHandler = require("../helper/unirestHandler");
 const Q = require("q");
 
@@ -28,9 +28,7 @@ router.get("/", function(req, res) {
 
     requestAccessToken(code)
         .then(function(token) {
-            const githubClient = new GitHubClient(token);
-
-            return githubClient.user();
+            return user.info(token);
         })
         .then(function(user) {
             res.send(user);
