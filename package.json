@@ -19,7 +19,8 @@
   "homepage": "https://github.com/ninjaprox/github-webhooks#readme",
   "dependencies": {
     "dotenv": "^2.0.0",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "unirest": "^0.5.1"
   },
   "devDependencies": {
     "nodemon": "^1.10.2"
