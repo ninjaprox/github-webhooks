@@ -2,6 +2,8 @@ const express = require("express");
 const url = require("url");
 const router = express.Router();
 const unirest = require("unirest");
+const GitHubClient = require("../lib/githubClient");
+const unirestHandler = require("../helper/unirestHandler");
 
 module.exports = router;
 
@@ -22,8 +24,14 @@ router.post("/", function(req, res) {
 
 router.get("/", function(req, res) {
     const code = req.query.code;
-    
-    requestAccessToken(code);
+
+    requestAccessToken(code, function(error, token) {
+        const githubClient = new GitHubClient(token);
+
+        githubClient.user(function(error, user) {
+            console.log(user);
+        });
+    });
     res.send("Success");
 });
 
@@ -41,9 +49,7 @@ function requestAccessToken(code, callback) {
             state: process.env.GITHUB_STATE,
             code: code
         })
-        .end(function(res) {
-            if (callback) {
-                callback(res.error, res.body.access_token);
-            }
-        });
+        .end(unirestHandler(callback, function(body) {
+            return body.access_token;
+        }));
 }
