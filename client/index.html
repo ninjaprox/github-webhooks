@@ -7,13 +7,13 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" ng-app="github-webhooks">
         <h1>GitHub Webhooks</h1>
         <form method="POST" action="/auth" class="form">
             <input type="submit" value="Log in with GitHub" class="btn btn-primary" />
         </form>
-        <!--<a href="http://github.com/login/oauth/authorize?client_id=1688d4fb0452d17b1464&scope=public_repo%20repo%20user%3Aemail">Log in with GitHub</a>-->
         <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+        <script type="text/javascript" src="app.js"></script>
     </div>
 </body>
 
