@@ -8,7 +8,7 @@ module.exports = function(body) {
     const merged = body.pull_request.merged;
     const githubClient = new GithubClient(body.token, repo);
     const issueLine = prBody.split("\r\n")[0] || "";
-    const issueNumbers = issueLine.match(/(\d+)/g);
+    const issueNumbers = issueLine.match(/(\d+)/g) || [];
 
     console.log({
         action: action,
