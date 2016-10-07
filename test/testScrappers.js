@@ -2,6 +2,8 @@ const jqueryPath = "./node_modules/jquery/dist/jquery.min.js";
 const expect = require("chai").expect;
 const phantom = require("phantom");
 const loginScrapper = require("../lib/scrapper/loginScrapper");
+const versionScrapper = require("../lib/scrapper/versionScrapper");
+
 
 describe("Scrappers", function() {
     var phantomInstance;
@@ -20,7 +22,6 @@ describe("Scrappers", function() {
                 return page.injectJs(jqueryPath);
             })
             .then(function(success) {
-                console.log("inject", success);
                 done();
             })
             .catch(function(error) {
@@ -74,7 +75,7 @@ describe("Scrappers", function() {
                 })
         });
 
-        it("should click login button", function() {
+        it("should click login button", function(done) {
             loginScrapper(page, email, password)
                 .then(function() {
                     page.evaluate(function() {
@@ -84,6 +85,42 @@ describe("Scrappers", function() {
                             expect(submited).to.be.true;
                             done();
                         })
+                        .catch(function(error) {
+                            done(error);
+                        });
+                })
+                .catch(function(error) {
+                    done(error);
+                });
+        });
+    });
+
+    describe("version", function() {
+        beforeEach(function(done) {
+            page.evaluate(function() {
+                    var content = $("<div class='build-version-table'>\
+                                  <span>1.0.0 (1)<span>\
+                                  <span>1.2.0 (1)<span>\
+                                  <span>1.2.3 (1)<span>\
+                                  <span>1</span>\
+                                  <span>a</span>\
+                                  </div>");
+
+                    $("body").append(content);
+                })
+                .then(function() {
+                    done();
+                });
+        });
+
+        it("should return versions", function(done) {
+            versionScrapper(page)
+                .then(function(versions) {
+                    expect(versions).to.deep.equal(["1.0.0(1)", "1.2.0(1)", "1.2.3(1)"]);
+                    done();
+                })
+                .catch(function(error) {
+                    done(error);
                 });
         });
     });
