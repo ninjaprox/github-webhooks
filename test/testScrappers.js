@@ -41,15 +41,15 @@ describe("Scrappers", function() {
         beforeEach(function(done) {
             page.evaluate(function() {
                     var form = $("<form>\
-                                  <input type=text id='email'/>\
-                                  <input type=password id='password'/>\
-                                  <input type=submit/>\
+                                  <input type=text id='email' />\
+                                  <input type=password id='password' />\
+                                  <input type=submit />\
                                   </form>");
 
                     $("body").append(form);
                     $("body").append("<div id='submit'></div>");
                     form.on("submit", function() {
-                        $("#submit").val("submited");
+                        $("#submit").text("submited");
                     });
                 })
                 .then(function() {
@@ -79,7 +79,7 @@ describe("Scrappers", function() {
             loginScrapper(page, email, password)
                 .then(function() {
                     page.evaluate(function() {
-                            return $("#submit").val() === "submited";
+                            return $("#submit").text() === "submited";
                         })
                         .then(function(submited) {
                             expect(submited).to.be.true;
