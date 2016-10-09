@@ -3,6 +3,10 @@ GitHub Webhooks
 
 ## Environment Variables
 
+ENV=PRODUCTION|DEV
+PORT
+LOG_LEVEL
+
 ### .env
 
 - GITHUB_CLIENT_ID
