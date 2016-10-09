@@ -63,5 +63,22 @@ describe("GithubClient", function() {
                 })
                 .catch(done);
         });
+
+        it.only("#issue should be done", function(done) {
+            githubClient.issue(1)
+                .then(function() {
+                    done();
+                })
+                .catch(done);
+        });
+
+        it.only("#linkInIssue should be done", function(done) {
+            githubClient.linkInIssue(1)
+                .then(function(link) {
+                    expect(link).to.equal("http://example.com")
+                    done();
+                })
+                .catch(done);
+        });
     });
 });
