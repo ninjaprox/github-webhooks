@@ -4,6 +4,7 @@ const phantom = require("phantom");
 const loginScrapper = require("../lib/scrapper/loginScrapper");
 const versionScrapper = require("../lib/scrapper/versionScrapper");
 const exceptionScrapper = require("../lib/scrapper/exceptionScrapper");
+const closeScrapper = require("../lib/scrapper/closeScrapper");
 
 describe("Scrappers", function() {
     var phantomInstance;
@@ -146,6 +147,38 @@ describe("Scrappers", function() {
                 .then(function(exception) {
                     expect(exception.exception).to.equal("Exception");
                     expect(exception.info).to.equal("Exception info");
+                    done();
+                })
+                .catch(function(error) {
+                    done(error);
+                });
+        });
+    });
+
+    describe("close", function() {
+        beforeEach(function(done) {
+            page.evaluate(function() {
+                    var content = $("<div class='toggle-button'></div>");
+
+                    $("body").append(content);
+                    content.on("click", function() {
+                        $(this).addClass("closed");
+                    });
+                })
+                .then(function() {
+                    done();
+                });
+        });
+
+        it("should click close button", function(done) {
+            closeScrapper(page)
+                .then(function() {
+                    return page.evaluate(function() {
+                        return $(".toggle-button.closed") !== null;
+                    });
+                })
+                .then(function(closed) {
+                    expect(closed).to.be.true;
                     done();
                 })
                 .catch(function(error) {
