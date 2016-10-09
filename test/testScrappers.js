@@ -25,9 +25,7 @@ describe("Scrappers", function() {
             .then(function(success) {
                 done();
             })
-            .catch(function(error) {
-                done(error);
-            });
+            .catch(done);
     });
 
     afterEach(function() {
@@ -86,13 +84,9 @@ describe("Scrappers", function() {
                             expect(submited).to.be.true;
                             done();
                         })
-                        .catch(function(error) {
-                            done(error);
-                        });
+                        .catch(done);
                 })
-                .catch(function(error) {
-                    done(error);
-                });
+                .catch(done);
         });
     });
 
@@ -171,9 +165,7 @@ describe("Scrappers", function() {
                     expect(exception.info).to.equal("Exception info");
                     done();
                 })
-                .catch(function(error) {
-                    done(error);
-                });
+                .catch(done);
         });
     });
 
@@ -203,9 +195,7 @@ describe("Scrappers", function() {
                     expect(closed).to.be.true;
                     done();
                 })
-                .catch(function(error) {
-                    done(error);
-                });
+                .catch(done);
         });
     });
 });
