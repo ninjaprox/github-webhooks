@@ -97,9 +97,10 @@ describe("Scrappers", function() {
     });
 
     describe("version", function() {
-        beforeEach(function(done) {
-            page.evaluate(function() {
-                    var content = $("<div class='build-version-table'>\
+        describe("version exists", function() {
+            beforeEach(function(done) {
+                page.evaluate(function() {
+                        var content = $("<div class='build-version-table'>\
                                   <span>1.0.0 (1)<span>\
                                   <span>1.2.0 (1)<span>\
                                   <span>1.2.3 (1)<span>\
@@ -107,22 +108,43 @@ describe("Scrappers", function() {
                                   <span>a</span>\
                                   </div>");
 
-                    $("body").append(content);
-                })
-                .then(function() {
-                    done();
-                });
+                        $("body").append(content);
+                    })
+                    .then(function() {
+                        done();
+                    });
+            });
+
+            it("should return versions", function(done) {
+                versionScrapper(page)
+                    .then(function(versions) {
+                        expect(versions).to.deep.equal(["1.0.0(1)", "1.2.0(1)", "1.2.3(1)"]);
+                        done();
+                    })
+                    .catch(done);
+            });
         });
 
-        it("should return versions", function(done) {
-            versionScrapper(page)
-                .then(function(versions) {
-                    expect(versions).to.deep.equal(["1.0.0(1)", "1.2.0(1)", "1.2.3(1)"]);
-                    done();
-                })
-                .catch(function(error) {
-                    done(error);
-                });
+        describe("version doesn't exist", function() {
+            beforeEach(function(done) {
+                page.evaluate(function() {
+                        var content = $("<div></div>");
+
+                        $("body").append(content);
+                    })
+                    .then(function() {
+                        done();
+                    });
+            });
+
+            it("should return empty version", function(done) {
+                versionScrapper(page)
+                    .then(function(versions) {
+                        expect(versions).to.deep.equal([]);
+                        done();
+                    })
+                    .catch(done);
+            });
         });
     });
 
