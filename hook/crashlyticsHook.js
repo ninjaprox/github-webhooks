@@ -21,11 +21,12 @@ router.post("/", function(req, res) {
             console.log("after login");
 
             return Q.all([
+                client,
                 client.versions(),
                 client.exception()
             ]);
         })
-        .spread(function(versions, exception) {
+        .spread(function(client, versions, exception) {
             const titleComponents = issue.title.split(" line ");
             
             issue.title = `Crash in ${titleComponents[0]}`;
@@ -36,6 +37,11 @@ router.post("/", function(req, res) {
             
             console.log("Issue:");
             console.log(issue);
+
+            return client;
+        })
+        .then(function(client) {
+            client.done();
         })
         .catch(function(error) {
             console.log(error);
