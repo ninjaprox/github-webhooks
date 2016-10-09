@@ -16,10 +16,8 @@ router.post("/", function(req, res) {
     const crashlyticsClient = new CrashlyticsClient(req.body.payload.url);
     var issue = JSON.parse(JSON.stringify(req.body.payload));
 
-    crashlyticsClient.login()
+    crashlyticsClient.load()
         .then(function(client) {
-            console.log("after login");
-
             return Q.all([
                 client,
                 client.versions(),
@@ -28,14 +26,15 @@ router.post("/", function(req, res) {
         })
         .spread(function(client, versions, exception) {
             const titleComponents = issue.title.split(" line ");
-            
+
             issue.title = `Crash in ${titleComponents[0]}`;
             issue.file = titleComponents[0];
             issue.line = titleComponents[2] || "unknown";
             issue.versions = versions;
             issue.exception = exception;
-            
-            console.log("Issue:");
+
+            console.log("Issue");
+            console.log("=====");
             console.log(issue);
 
             return client;
@@ -44,9 +43,10 @@ router.post("/", function(req, res) {
             client.done();
         })
         .catch(function(error) {
+            client.done();
             console.log(error);
         });
-
+        
     console.log(req.body);
     res.status(200).end();
 });
