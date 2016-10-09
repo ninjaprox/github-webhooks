@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "node_modules/.bin/nodemon main.js",
-    "test": "node_modules/.bin/mocha test"
+    "start": "ENV=DEV PORT=8000 nodemon main.js",
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
