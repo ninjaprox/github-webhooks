@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "ENV=DEV PORT=8000 nodemon main.js",
+    "start": "ENV=DEV PORT=8000 LOG_LEVEL=debug nodemon main.js | bunyan",
     "test": "mocha test"
   },
   "repository": {
