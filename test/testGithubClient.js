@@ -75,7 +75,7 @@ describe("GithubClient", function() {
         it.only("#linkInIssue should be done", function(done) {
             githubClient.linkInIssue(1)
                 .then(function(link) {
-                    expect(link).to.equal("http://example.com")
+                    expect(link).to.be.null;
                     done();
                 })
                 .catch(done);
