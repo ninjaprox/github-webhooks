@@ -1,6 +1,7 @@
 const GithubClient = require("../../lib/githubClient");
 const log = require("../../logger/logger");
 const Q = require("q");
+const CrashlyticsClient = require("../../lib/crashlyticsClient");
 
 module.exports = function(body) {
     const action = body.action;
@@ -23,15 +24,66 @@ module.exports = function(body) {
         }
     }, "Compact pull request detail");
     if (action === "closed" && merged) {
-        issueNumbers.forEach(function(issueNumber) {
-            console.log("Closing issue", issueNumber);
-            githubClient.closeIssue(issueNumber)
+        const closeIssueTasks = issueNumbers.map(function(issueNumber) {
+            log.info("Closing issue %d", issueNumber);
+
+            return githubClient.closeIssue(issueNumber)
                 .then(function() {
-                    console.log("Closed issue", issueNumber);
+                    log.info("Closed issue %d", issueNumber);
                 })
-                .catch(function(error) {
-                    console.log(error);
-                });
+                .catch(log.error);
         });
+        const linkInIssueTasks = issueNumbers.map(function(issueNumber) {
+            log.info("Finding link in issue %d", issueNumber);
+
+            return githubClient.linkInIssue(issueNumber)
+                .then(function(link) {
+                    log.info("Found link %s in issue %d", link, issueNumber);
+
+                    return link;
+                })
+                .catch(log.error);
+        });
+
+        Q.all(closeIssueTasks)
+            .then(function(results) {
+                log.info("Closed all issues related to pull request %d", number);
+
+                return Q.all(linkInIssueTasks);
+            })
+            .then(function(links) {
+                const closeCrashlyticsIssueTasks = links
+                    .filter(function(link) {
+                        return link;
+                    })
+                    .map(function(link) {
+                        log.info("Closing Crashlytics issue at %s", link);
+
+                        return (new CrashlyticsClient(link))
+                            .load(function(client) {
+                                return [client, client.close()];
+                            })
+                            .spread(function(client) {
+                                log.info("Closed Crashlytics issue at %s", link);
+
+                                return client;
+                            })
+                            .catch(log.error);
+                    });
+
+                return Q.all(closeCrashlyticsIssueTasks);
+            })
+            .then(function(clients) {
+                if (clients.length) {
+                    log.info("Closed all Crashlytics issues related to pull request %d", number);
+                } else {
+                    log.info("There is no Crashlytics issue related to pull request %d", number);
+                }
+
+                clients.forEach(function(client) {
+                    client.done();
+                });
+            })
+            .catch(log.error);
     }
 }
