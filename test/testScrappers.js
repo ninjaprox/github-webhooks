@@ -3,7 +3,7 @@ const expect = require("chai").expect;
 const phantom = require("phantom");
 const loginScrapper = require("../lib/scrapper/loginScrapper");
 const versionScrapper = require("../lib/scrapper/versionScrapper");
-
+const exceptionScrapper = require("../lib/scrapper/exceptionScrapper");
 
 describe("Scrappers", function() {
     var phantomInstance;
@@ -117,6 +117,35 @@ describe("Scrappers", function() {
             versionScrapper(page)
                 .then(function(versions) {
                     expect(versions).to.deep.equal(["1.0.0(1)", "1.2.0(1)", "1.2.3(1)"]);
+                    done();
+                })
+                .catch(function(error) {
+                    done(error);
+                });
+        });
+    });
+
+    describe("exception", function() {
+        beforeEach(function(done) {
+            page.evaluate(function() {
+                    var content = $("<div class='strong title'>" +
+                                  "<!-- coment -->" +
+                                  "Exception" +
+                                  "<div class='info normal'>Exception info</div>" +
+                                  "</div>");
+
+                    $("body").append(content);
+                })
+                .then(function() {
+                    done();
+                });
+        });
+
+        it("should return exception and info", function(done) {
+            exceptionScrapper(page)
+                .then(function(exception) {
+                    expect(exception.exception).to.equal("Exception");
+                    expect(exception.info).to.equal("Exception info");
                     done();
                 })
                 .catch(function(error) {
