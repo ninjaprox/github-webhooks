@@ -129,10 +129,10 @@ describe("Scrappers", function() {
         beforeEach(function(done) {
             page.evaluate(function() {
                     var content = $("<div class='strong title'>" +
-                                  "<!-- coment -->" +
-                                  "Exception" +
-                                  "<div class='info normal'>Exception info</div>" +
-                                  "</div>");
+                        "<!-- coment -->" +
+                        "Exception" +
+                        "<div class='info normal'>Exception info</div>" +
+                        "</div>");
 
                     $("body").append(content);
                 })
