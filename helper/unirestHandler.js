@@ -6,6 +6,7 @@ module.exports = unirestHandler;
 
 function unirestHandler(resolve, reject, reduce, proxy) {
     return function(res) {
+        const reduce = (typeof arguments[2] === "function") ? reduce : null;
         const data = reduce ? reduce(res.body) : res.body;
 
         if (proxy) {
@@ -19,6 +20,11 @@ function unirestHandler(resolve, reject, reduce, proxy) {
             log.error(error);
             reject(res.error);
         } else {
+            const logMessage = (typeof arguments[2] === "string") ? arguments[2] : null;
+
+            if (logMessage) {
+                log.info(logMessage);
+            }
             resolve(data);
         }
     };

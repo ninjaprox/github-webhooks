@@ -36,7 +36,7 @@ router.post("/", function(req, res) {
 
             log.info({
                 issue: issue
-            }, "Crashlytics issue detai");
+            }, "Crashlytics issue detail");
 
             return client;
         })
@@ -45,7 +45,6 @@ router.post("/", function(req, res) {
         })
         .catch(function(error) {
             client.done();
-            log.error(error);
         });
 
     res.status(200).end();

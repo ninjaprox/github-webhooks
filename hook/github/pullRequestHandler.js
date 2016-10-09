@@ -25,28 +25,14 @@ module.exports = function(body) {
     }, "Compact pull request detail");
     if (action === "closed" && merged) {
         const closeIssueTasks = issueNumbers.map(function(issueNumber) {
-            log.info("Closing issue %d", issueNumber);
-
-            return githubClient.closeIssue(issueNumber)
-                .then(function() {
-                    log.info("Closed issue %d", issueNumber);
-                })
-                .catch(log.error);
+            return githubClient.closeIssue(issueNumber);
         });
         const linkInIssueTasks = issueNumbers.map(function(issueNumber) {
-            log.info("Finding link in issue %d", issueNumber);
-
-            return githubClient.linkInIssue(issueNumber)
-                .then(function(link) {
-                    log.info("Found link %s in issue %d", link, issueNumber);
-
-                    return link;
-                })
-                .catch(log.error);
+            return githubClient.linkInIssue(issueNumber);
         });
 
         Q.all(closeIssueTasks)
-            .then(function(results) {
+            .then(function() {
                 log.info("Closed all issues related to pull request %d", number);
 
                 return Q.all(linkInIssueTasks);
@@ -57,18 +43,13 @@ module.exports = function(body) {
                         return link;
                     })
                     .map(function(link) {
-                        log.info("Closing Crashlytics issue at %s", link);
-
                         return (new CrashlyticsClient(link))
                             .load(function(client) {
                                 return [client, client.close()];
                             })
                             .spread(function(client) {
-                                log.info("Closed Crashlytics issue at %s", link);
-
                                 return client;
-                            })
-                            .catch(log.error);
+                            });
                     });
 
                 return Q.all(closeCrashlyticsIssueTasks);
@@ -83,7 +64,6 @@ module.exports = function(body) {
                 clients.forEach(function(client) {
                     client.done();
                 });
-            })
-            .catch(log.error);
+            });
     }
 }
