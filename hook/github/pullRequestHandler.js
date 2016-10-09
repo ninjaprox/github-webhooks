@@ -1,4 +1,6 @@
 const GithubClient = require("../../lib/githubClient");
+const log = require("../../logger/logger");
+const Q = require("q");
 
 module.exports = function(body) {
     const action = body.action;
@@ -10,14 +12,16 @@ module.exports = function(body) {
     const issueLine = prBody.split("\r\n")[0] || "";
     const issueNumbers = issueLine.match(/(\d+)/g) || [];
 
-    console.log({
-        action: action,
-        repo: repo,
-        number: number,
-        body: prBody,
-        merged: merged,
-        issueNumbers: issueNumbers
-    });
+    log.info({
+        "pull_request": {
+            action: action,
+            repo: repo,
+            number: number,
+            body: prBody,
+            merged: merged,
+            issueNumbers: issueNumbers
+        }
+    }, "Compact pull request detail");
     if (action === "closed" && merged) {
         issueNumbers.forEach(function(issueNumber) {
             console.log("Closing issue", issueNumber);

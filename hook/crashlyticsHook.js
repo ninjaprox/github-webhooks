@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const CrashlyticsClient = require("../lib/crashlyticsClient");
 const Q = require("q");
+const log = require("../logger/logger");
 
 module.exports = router;
 
@@ -33,9 +34,9 @@ router.post("/", function(req, res) {
             issue.versions = versions;
             issue.exception = exception;
 
-            console.log("Issue");
-            console.log("=====");
-            console.log(issue);
+            log.info({
+                issue: issue
+            }, "Crashlytics issue detai");
 
             return client;
         })
@@ -44,9 +45,8 @@ router.post("/", function(req, res) {
         })
         .catch(function(error) {
             client.done();
-            console.log(error);
+            log.error(error);
         });
-        
-    console.log(req.body);
+
     res.status(200).end();
 });
