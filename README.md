@@ -3,9 +3,9 @@ GitHub Webhooks
 
 ## Environment Variables
 
-ENV=PRODUCTION|DEV
-PORT
-LOG_LEVEL
+- ENV=PRODUCTION|DEV
+- PORT
+- LOG_LEVEL
 
 ### .env
 
