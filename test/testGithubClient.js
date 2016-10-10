@@ -64,7 +64,7 @@ describe("GithubClient", function() {
                 .catch(done);
         });
 
-        it.only("#issue should be done", function(done) {
+        it("#issue should be done", function(done) {
             githubClient.issue(1)
                 .then(function() {
                     done();
@@ -72,7 +72,7 @@ describe("GithubClient", function() {
                 .catch(done);
         });
 
-        it.only("#linkInIssue should be done", function(done) {
+        it("#linkInIssue should be done", function(done) {
             githubClient.linkInIssue(1)
                 .then(function(link) {
                     expect(link).to.be.null;
