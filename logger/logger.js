@@ -18,7 +18,7 @@ if (!isTest) {
 } else {
     log = bunyan.createLogger({
         name: "TEST",
-        level: "debug"
+        level: "error"
     });
 }
 
