@@ -4,7 +4,7 @@ var log;
 
 if (!isTest) {
     log = bunyan.createLogger({
-        name: process.env.npm_package_name,
+        name: "github-webhooks",
         level: process.env.LOG_LEVEL,
         streams: [{
             stream: process.stdout,
