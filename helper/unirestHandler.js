@@ -17,7 +17,7 @@ function unirestHandler(resolve, reject, reduce, proxy) {
             res: res
         });
         if (res.error) {
-            log.error(error);
+            log.error(res.error);
             reject(res.error);
         } else {
             const logMessage = (typeof arguments[2] === "string") ? arguments[2] : null;
