@@ -3,12 +3,11 @@ GitHub Webhooks
 
 ## Environment Variables
 
+### .env
+
 - ENV=PRODUCTION|DEV
 - PORT
 - LOG_LEVEL
-
-### .env
-
 - GITHUB_CLIENT_ID
 - GITHUB_CLIENT_SECRET
 - GITHUB_STATE=xpP70tKwYFG7pOTNM3g3Oi3QpEQWBQ1UqyraLwc6PRr6xHmr3a

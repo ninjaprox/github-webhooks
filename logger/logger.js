@@ -1,5 +1,5 @@
 const bunyan = require("bunyan");
-const isTest = !process.env.npm_package_name;
+const isTest = process.env.ENV !== "PRODUCTION" && process.env.ENV !== "DEV";
 var log;
 
 if (!isTest) {
