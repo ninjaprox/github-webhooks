@@ -4,6 +4,8 @@ const CrashlyticsClient = require("../lib/crashlyticsClient");
 describe("CrashlyticsClient", function() {
     var crashlyticsClient;
 
+    this.timeout(15000);
+
     beforeEach(function() {
         crashlyticsClient = new CrashlyticsClient("https://fabric.io/piktochart/ios/apps/com.piktochart.piktopad/issues/57f798bc0aeb16625b3d873b");
     });
@@ -53,7 +55,7 @@ describe("CrashlyticsClient", function() {
             .catch(done);
     });
 
-    it.skip("#close should be done", function(done) {
+    it("#close should be done", function(done) {
         crashlyticsClient.load()
             .then(function(client) {
                 return client.close();
