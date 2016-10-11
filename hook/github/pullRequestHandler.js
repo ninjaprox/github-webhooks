@@ -44,7 +44,8 @@ module.exports = function(body) {
                     })
                     .map(function(link) {
                         return (new CrashlyticsClient(link))
-                            .load(function(client) {
+                            .load()
+                            .then(function(client) {
                                 return [client, client.close()];
                             })
                             .spread(function(client) {
