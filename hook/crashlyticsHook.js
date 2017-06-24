@@ -70,6 +70,7 @@ router.post("/", function(req, res) {
             client.done();
         })
         .catch(function(error) {
+            log.error(error);
             client.done();
         });
 
