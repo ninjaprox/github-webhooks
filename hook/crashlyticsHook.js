@@ -66,7 +66,7 @@ router.post("/", function(req, res) {
 
             labels.push("crashlytics");
             return [
-                client
+                client,
                 githubClient.createIssue(issue.title, {
                     body: body,
                     labels: labels
