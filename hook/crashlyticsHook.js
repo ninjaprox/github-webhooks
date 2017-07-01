@@ -9,7 +9,10 @@ const GithubClient = require("../lib/githubClient");
 
 module.exports = router;
 
-const githubClient = new GithubClient(process.env.GITHUB_TOKEN, process.env.GITHUB_REPO);
+const githubClient = new GithubClient(
+    process.env.GITHUB_TOKEN,
+    process.env.GITHUB_REPO
+);
 
 /*global $*/
 router.post("/", function(req, res) {
@@ -22,13 +25,10 @@ router.post("/", function(req, res) {
     const crashlyticsClient = new CrashlyticsClient(req.body.payload.url);
     var issue = JSON.parse(JSON.stringify(req.body.payload));
 
-    crashlyticsClient.load()
+    crashlyticsClient
+        .load()
         .then(function(client) {
-            return Q.all([
-                client,
-                client.versions(),
-                client.exception()
-            ]);
+            return Q.all([client, client.versions(), client.exception()]);
         })
         .spread(function(client, versions, exception) {
             const titleComponents = issue.title.split(" line ");
@@ -39,14 +39,18 @@ router.post("/", function(req, res) {
             issue.versions = versions;
             issue.exception = exception;
 
-            log.info({
-                issue: issue
-            }, "Crashlytics issue detail");
+            log.info(
+                {
+                    issue: issue
+                },
+                "Crashlytics issue detail"
+            );
 
             return [client, issue];
         })
         .spread(function(client, issue) {
-            const body = ["### File",
+            const body = [
+                "### File",
                 `${issue.file}`,
                 "### Method",
                 `${issue.method}`,
@@ -61,17 +65,19 @@ router.post("/", function(req, res) {
             var labels = issue.versions;
 
             labels.push("crashlytics");
-            return [client, githubClient.createIssue(issue.title, {
-                body: body,
-                labels: labels
-            })];
+            return [
+                client
+                githubClient.createIssue(issue.title, {
+                    body: body,
+                    labels: labels
+                })
+            ];
         })
         .spread(function(client) {
-            client.done();
+            client.end();
         })
         .catch(function(error) {
             log.error(error);
-            client.done();
         });
 
     res.status(200).end();
