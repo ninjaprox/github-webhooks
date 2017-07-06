@@ -7,22 +7,25 @@ module.exports = function(body) {
     const action = body.action;
     const repo = body.repository.full_name;
     const number = body.number;
-    const prBody = body.pull_request.body;
+    const prBody = body.pull_request.body || "";
     const merged = body.pull_request.merged;
     const githubClient = new GithubClient(body.token, repo);
     const issueLine = prBody.split("\r\n")[0] || "";
     const issueNumbers = issueLine.match(/(\d+)/g) || [];
 
-    log.info({
-        "pull_request": {
-            action: action,
-            repo: repo,
-            number: number,
-            body: prBody,
-            merged: merged,
-            issueNumbers: issueNumbers
-        }
-    }, "Compact pull request detail");
+    log.info(
+        {
+            pull_request: {
+                action: action,
+                repo: repo,
+                number: number,
+                body: prBody,
+                merged: merged,
+                issueNumbers: issueNumbers
+            }
+        },
+        "Compact pull request detail"
+    );
     if (action === "closed" && merged) {
         const closeIssueTasks = issueNumbers.map(function(issueNumber) {
             return githubClient.closeIssue(issueNumber);
@@ -33,7 +36,10 @@ module.exports = function(body) {
 
         Q.all(closeIssueTasks)
             .then(function() {
-                log.info("Closed all issues related to pull request %d", number);
+                log.info(
+                    "Closed all issues related to pull request %d",
+                    number
+                );
 
                 return Q.all(linkInIssueTasks);
             })
@@ -43,7 +49,7 @@ module.exports = function(body) {
                         return link;
                     })
                     .map(function(link) {
-                        return (new CrashlyticsClient(link))
+                        return new CrashlyticsClient(link)
                             .load()
                             .then(function(client) {
                                 return [client, client.close()];
@@ -57,9 +63,15 @@ module.exports = function(body) {
             })
             .then(function(clients) {
                 if (clients.length) {
-                    log.info("Closed all Crashlytics issues related to pull request %d", number);
+                    log.info(
+                        "Closed all Crashlytics issues related to pull request %d",
+                        number
+                    );
                 } else {
-                    log.info("There is no Crashlytics issue related to pull request %d", number);
+                    log.info(
+                        "There is no Crashlytics issue related to pull request %d",
+                        number
+                    );
                 }
 
                 clients.forEach(function(client) {
@@ -67,4 +79,4 @@ module.exports = function(body) {
                 });
             });
     }
-}
+};
